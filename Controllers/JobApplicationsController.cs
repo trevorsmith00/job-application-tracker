@@ -1,5 +1,6 @@
 using JobApplicationTracker.Models;
 using JobApplicationTracker.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobApplicationTracker.Controllers;
@@ -10,11 +11,16 @@ public class JobApplicationsController : ControllerBase
 {
     private readonly JobApplicationRepository _repository;
     private readonly GhostingService _ghostingService;
+    private readonly ILogger<JobApplicationsController> _logger;
 
-    public JobApplicationsController(JobApplicationRepository repository, GhostingService ghostingService)
+    public JobApplicationsController(
+        JobApplicationRepository repository,
+        GhostingService ghostingService,
+        ILogger<JobApplicationsController> logger)
     {
         _repository = repository;
         _ghostingService = ghostingService;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -50,8 +56,16 @@ public class JobApplicationsController : ControllerBase
             return BadRequest(new { error = urlError });
         }
 
-        var created = await _repository.CreateAsync(request);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        try
+        {
+            var created = await _repository.CreateAsync(request);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (SqliteException ex)
+        {
+            _logger.LogError(ex, "Create application failed due to SQLite error.");
+            return StatusCode(500, new { error = $"Database write failed: {ex.SqliteErrorCode}. {ex.Message}" });
+        }
     }
 
     [HttpPut("{id:int}")]
@@ -73,8 +87,16 @@ public class JobApplicationsController : ControllerBase
             return BadRequest(new { error = urlError });
         }
 
-        var updated = await _repository.UpdateAsync(id, request);
-        return updated is null ? NotFound() : Ok(updated);
+        try
+        {
+            var updated = await _repository.UpdateAsync(id, request);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+        catch (SqliteException ex)
+        {
+            _logger.LogError(ex, "Update application {ApplicationId} failed due to SQLite error.", id);
+            return StatusCode(500, new { error = $"Database update failed: {ex.SqliteErrorCode}. {ex.Message}" });
+        }
     }
 
     [HttpDelete("{id:int}")]

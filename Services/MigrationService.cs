@@ -63,6 +63,8 @@ public class MigrationService
 
             _logger.LogInformation("Applied migration {MigrationFilename}", filename);
         }
+
+        await EnsureJobApplicationsTableShapeAsync(connection);
     }
 
     private static async Task<bool> AlreadyAppliedAsync(SqliteConnection connection, string filename)
@@ -88,6 +90,54 @@ public class MigrationService
             var command = connection.CreateCommand();
             command.CommandText = sql;
             await command.ExecuteNonQueryAsync();
+        }
+    }
+
+    private async Task EnsureJobApplicationsTableShapeAsync(SqliteConnection connection)
+    {
+        var existingColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var pragma = connection.CreateCommand();
+        pragma.CommandText = "PRAGMA table_info(job_applications);";
+
+        await using (var reader = await pragma.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                existingColumns.Add(reader.GetString(1));
+            }
+        }
+
+        if (existingColumns.Count == 0)
+        {
+            return;
+        }
+
+        var requiredColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["application_link"] = "TEXT NULL",
+            ["job_level"] = "TEXT NULL",
+            ["salary_text"] = "TEXT NULL",
+            ["key_skills_json"] = "TEXT NULL",
+            ["source_url"] = "TEXT NULL",
+            ["follow_up_date"] = "TEXT NULL",
+            ["job_url"] = "TEXT NULL",
+            ["location"] = "TEXT NULL",
+            ["notes"] = "TEXT NULL",
+            ["created_at_utc"] = "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
+            ["updated_at_utc"] = "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        };
+
+        foreach (var kvp in requiredColumns)
+        {
+            if (existingColumns.Contains(kvp.Key))
+            {
+                continue;
+            }
+
+            var alter = connection.CreateCommand();
+            alter.CommandText = $"ALTER TABLE job_applications ADD COLUMN {kvp.Key} {kvp.Value};";
+            await alter.ExecuteNonQueryAsync();
+            _logger.LogWarning("Schema drift repaired: added missing column {ColumnName} to job_applications.", kvp.Key);
         }
     }
 }
