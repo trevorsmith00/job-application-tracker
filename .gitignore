@@ -25,3 +25,5 @@ appsettings.*.json
 ## OS
 .DS_Store
 Thumbs.db
+
+Database/job-tracker.db
