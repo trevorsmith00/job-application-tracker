@@ -1,0 +1,27 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.log
+
+## Configuration files with sensitive data
+appsettings.json
+appsettings.*.json
+!appsettings.example.json
+
+## Visual Studio
+.vs/
+.vscode/
+*.userprefs
+
+## Rider
+.idea/
+
+## OS
+.DS_Store
+Thumbs.db

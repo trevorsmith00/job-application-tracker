@@ -1,0 +1,6 @@
+-- SQLite schema reference for the job tracker.
+-- Runtime migrations live in:
+--   Database/Migrations/001_create_job_applications.sql
+--   Database/Migrations/002_seed_job_applications.sql
+--
+-- The app applies migrations automatically at startup.

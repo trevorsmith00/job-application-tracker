@@ -1,0 +1,297 @@
+:root {
+  --bg: #f6f4ef;
+  --panel: #ffffff;
+  --ink: #1f2a37;
+  --accent: #0c7d69;
+  --accent-2: #f2a900;
+  --danger: #b42318;
+  --line: #d8d1c4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(242, 169, 0, 0.2), transparent 20%),
+    radial-gradient(circle at 85% 5%, rgba(12, 125, 105, 0.2), transparent 25%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.hero {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: linear-gradient(120deg, #fff8e6, #ecfff9);
+}
+
+.hero h1 {
+  margin: 0;
+}
+
+.hero p {
+  margin: 0.45rem 0 0;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.command-bar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.command-bar input {
+  flex: 1 1 500px;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+select,
+textarea {
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+}
+
+.controls input {
+  flex: 1 1 250px;
+}
+
+.checkbox {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+button {
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  padding: 0.55rem 0.8rem;
+}
+
+button:hover {
+  opacity: 0.92;
+}
+
+.form-panel h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+}
+
+.intake-panel h2 {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.6rem;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+.actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.review-box {
+  margin-top: 0.8rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.8rem;
+}
+
+.review-box h3 {
+  margin: 0 0 0.6rem;
+}
+
+.saved-filters {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.chip-row {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: #f2f4f8;
+  color: #2d3748;
+  border: 1px solid var(--line);
+}
+
+.chip.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.raw-text {
+  white-space: pre-wrap;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #f4f5f7;
+  border: 1px solid var(--line);
+  border-radius: 0.45rem;
+  padding: 0.5rem;
+}
+
+.ghost {
+  background: #8a8f98;
+}
+
+.error {
+  color: var(--danger);
+}
+
+.pipeline {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(6, minmax(220px, 1fr));
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+}
+
+.column {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  padding: 0.65rem;
+}
+
+.column h3 {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column h3 span {
+  background: #edf2f7;
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.8rem;
+}
+
+.cards {
+  margin-top: 0.65rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  padding: 0.5rem;
+  background: #fffdfa;
+}
+
+.card p {
+  margin: 0.2rem 0 0.3rem;
+}
+
+.card small {
+  display: block;
+}
+
+.due {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.inline-edit {
+  margin-top: 0.4rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.danger {
+  background: var(--danger);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.45);
+  display: grid;
+  place-items: center;
+  z-index: 30;
+}
+
+.modal {
+  width: min(560px, 92vw);
+  background: #fff;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line);
+  padding: 0.8rem;
+}
+
+.quick-add-form {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.palette {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 0.8rem;
+  border: 1px solid var(--line);
+  padding: 0.8rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .pipeline {
+    grid-template-columns: repeat(6, minmax(260px, 1fr));
+  }
+}
