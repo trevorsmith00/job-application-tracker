@@ -71,7 +71,7 @@ public class JobApplicationRepository
         }
 
         sql.Append("""
-            ORDER BY
+             ORDER BY
                 CASE status
                     WHEN 'Wishlist' THEN 1
                     WHEN 'Applied' THEN 2
@@ -278,8 +278,8 @@ public class JobApplicationRepository
             KeySkills = ParseSkills(reader.IsDBNull(11) ? null : reader.GetString(11)),
             SourceUrl = reader.IsDBNull(12) ? null : reader.GetString(12),
             Notes = reader.IsDBNull(13) ? null : reader.GetString(13),
-            CreatedAtUtc = DateTime.Parse(reader.GetString(14)).ToUniversalTime(),
-            UpdatedAtUtc = DateTime.Parse(reader.GetString(15)).ToUniversalTime()
+            CreatedAtUtc = ParseUtcOrNow(reader, 14),
+            UpdatedAtUtc = ParseUtcOrNow(reader, 15)
         };
     }
 
@@ -308,5 +308,18 @@ public class JobApplicationRepository
         {
             return [];
         }
+    }
+
+    private static DateTime ParseUtcOrNow(SqliteDataReader reader, int ordinal)
+    {
+        if (reader.IsDBNull(ordinal))
+        {
+            return DateTime.UtcNow;
+        }
+
+        var raw = reader.GetString(ordinal);
+        return DateTime.TryParse(raw, out var parsed)
+            ? parsed.ToUniversalTime()
+            : DateTime.UtcNow;
     }
 }

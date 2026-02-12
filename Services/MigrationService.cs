@@ -123,8 +123,8 @@ public class MigrationService
             ["job_url"] = "TEXT NULL",
             ["location"] = "TEXT NULL",
             ["notes"] = "TEXT NULL",
-            ["created_at_utc"] = "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP",
-            ["updated_at_utc"] = "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP"
+            ["created_at_utc"] = "TEXT NULL",
+            ["updated_at_utc"] = "TEXT NULL"
         };
 
         foreach (var kvp in requiredColumns)
@@ -139,5 +139,18 @@ public class MigrationService
             await alter.ExecuteNonQueryAsync();
             _logger.LogWarning("Schema drift repaired: added missing column {ColumnName} to job_applications.", kvp.Key);
         }
+
+        // Normalize legacy statuses and ensure timestamps are present for mapper safety.
+        var normalize = connection.CreateCommand();
+        normalize.CommandText = """
+            UPDATE job_applications
+            SET status = 'Interviewing'
+            WHERE status IN ('Interview', 'Interviewed');
+
+            UPDATE job_applications
+            SET created_at_utc = COALESCE(created_at_utc, CURRENT_TIMESTAMP),
+                updated_at_utc = COALESCE(updated_at_utc, CURRENT_TIMESTAMP);
+            """;
+        await normalize.ExecuteNonQueryAsync();
     }
 }

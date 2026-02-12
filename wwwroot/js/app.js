@@ -2,6 +2,15 @@ const { useEffect, useMemo, useState } = React;
 
 const statuses = ["Wishlist", "Applied", "Interviewing", "Offer", "Rejected", "Ghosted", "Closed"];
 const apiBase = "/api/applications";
+const usStates = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware",
+  "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+  "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+  "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+  "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
+  "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
+  "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming",
+];
 
 const savedFilters = [
   {
@@ -44,6 +53,7 @@ function App() {
     role: "",
     status: "Applied",
     appliedOn: today(),
+    location: "",
     followUpDate: "",
   });
 
@@ -134,6 +144,7 @@ function App() {
         role: quickAdd.role.trim(),
         status: quickAdd.status,
         appliedOn: quickAdd.appliedOn,
+        location: quickAdd.location || null,
         followUpDate: quickAdd.followUpDate || null,
       }),
     });
@@ -143,7 +154,7 @@ function App() {
       return;
     }
 
-    setQuickAdd({ company: "", role: "", status: "Applied", appliedOn: today(), followUpDate: "" });
+    setQuickAdd({ company: "", role: "", status: "Applied", appliedOn: today(), location: "", followUpDate: "" });
     setQuickAddOpen(false);
     await loadData();
   }
@@ -154,6 +165,7 @@ function App() {
       [item.id]: {
         role: item.role,
         status: item.status,
+        location: item.location || "",
         followUpDate: item.followUpDate || "",
         notes: item.notes || "",
       },
@@ -184,7 +196,7 @@ function App() {
       followUpDate: draft.followUpDate || null,
       jobUrl: item.jobUrl || null,
       applicationLink: item.applicationLink || null,
-      location: item.location || null,
+      location: draft.location || null,
       jobLevel: item.jobLevel || null,
       salaryText: item.salaryText || null,
       keySkills: item.keySkills || [],
@@ -382,6 +394,13 @@ function App() {
                           >
                             {statuses.map((x) => <option key={x} value={x}>{x}</option>)}
                           </select>
+                          <select
+                            value={edit.location}
+                            onChange={(e) => updateInlineField(item.id, "location", e.target.value)}
+                          >
+                            <option value="">Select state</option>
+                            {usStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                          </select>
                           <input
                             type="date"
                             value={edit.followUpDate}
@@ -429,6 +448,13 @@ function App() {
                 onChange={(e) => setQuickAdd({ ...quickAdd, status: e.target.value })}
               >
                 {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <select
+                value={quickAdd.location}
+                onChange={(e) => setQuickAdd({ ...quickAdd, location: e.target.value })}
+              >
+                <option value="">Select state</option>
+                {usStates.map((state) => <option key={state} value={state}>{state}</option>)}
               </select>
               <input
                 type="date"

@@ -66,6 +66,11 @@ public class JobApplicationsController : ControllerBase
             _logger.LogError(ex, "Create application failed due to SQLite error.");
             return StatusCode(500, new { error = $"Database write failed: {ex.SqliteErrorCode}. {ex.Message}" });
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Create application failed.");
+            return StatusCode(500, new { error = $"Create failed: {ex.Message}" });
+        }
     }
 
     [HttpPut("{id:int}")]
@@ -96,6 +101,11 @@ public class JobApplicationsController : ControllerBase
         {
             _logger.LogError(ex, "Update application {ApplicationId} failed due to SQLite error.", id);
             return StatusCode(500, new { error = $"Database update failed: {ex.SqliteErrorCode}. {ex.Message}" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Update application {ApplicationId} failed.", id);
+            return StatusCode(500, new { error = $"Update failed: {ex.Message}" });
         }
     }
 
